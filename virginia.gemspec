@@ -13,11 +13,8 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "virginia"
 
-  # Use the following if using Git
-  # s.files         = `git ls-files`.split("\n")
-  # s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.files         = Dir.glob("{lib}/**/*") + %w( README.md Rakefile Gemfile)
-  s.test_files    = Dir.glob("{spec}/**/*")
+  s.files         = `git ls-files`.split("\n")
+  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths = ["lib"]
 
   s.add_runtime_dependency %q<adhearsion>, ["~> 2.1"]
