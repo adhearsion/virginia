@@ -1,29 +1,15 @@
 module Virginia
   class Plugin < Adhearsion::Plugin
-    # Actions to perform when the plugin is loaded
-    #
+
     init :virginia do
       logger.warn "Virginia has been loaded"
+      Service.start
     end
 
-    # Basic configuration for the plugin
-    #
     config :virginia do
-      greeting "Hello", :desc => "What to use to greet users"
+      host "0.0.0.0", :desc => "IP to bind the listener to"
+      port "8080", :desc => "The port to bind the listener to"
+      handler Virginia::LoggingHandler, :desc => "The object that will be handling the requests.  Must be a Reel:App."
     end
-
-    # Defining a Rake task is easy
-    # The following can be invoked with:
-    #   rake plugin_demo:info
-    #
-    tasks do
-      namespace :virginia do
-        desc "Prints the PluginTemplate information"
-        task :info do
-          STDOUT.puts "Virginia plugin v. #{VERSION}"
-        end
-      end
-    end
-
   end
 end
