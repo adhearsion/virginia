@@ -1,18 +1,19 @@
 PATH
   remote: .
   specs:
-    virginia (0.0.1)
+    virginia (0.0.2)
       activesupport (>= 3.0.10)
       adhearsion (~> 2.1)
+      octarine
       reel
 
 GEM
   remote: http://rubygems.org/
   specs:
-    activesupport (3.2.8)
+    activesupport (3.2.12)
       i18n (~> 0.6)
       multi_json (~> 1.0)
-    adhearsion (2.1.3)
+    adhearsion (2.2.1)
       activesupport (~> 3.0)
       adhearsion-loquacious (~> 1.9)
       bundler (~> 1.0)
@@ -22,7 +23,7 @@ GEM
       ffi (~> 1.0)
       future-resource (~> 1.0)
       girl_friday
-      has-guarded-handlers (~> 1.1)
+      has-guarded-handlers (~> 1.5)
       logging (~> 1.8)
       pry
       punchblock (~> 1.4)
@@ -30,30 +31,31 @@ GEM
       ruby_speech (~> 1.0)
       thor
     adhearsion-loquacious (1.9.3)
-    blather (0.8.1)
+    blather (0.8.2)
       activesupport (>= 2.3.11)
-      eventmachine (>= 0.12.6)
+      eventmachine (>= 1.0.0)
       girl_friday
       niceogiri (~> 1.0)
-      nokogiri (~> 1.5.5)
-    celluloid (0.12.2)
+      nokogiri (~> 1.5, >= 1.5.6)
+    celluloid (0.12.4)
       facter (>= 1.6.12)
       timers (>= 1.0.0)
-    celluloid-io (0.12.0)
+    celluloid-io (0.12.1)
       celluloid (~> 0.12.0)
       nio4r (>= 0.4.0)
     certified (0.1.1)
     coderay (1.0.8)
-    connection_pool (0.9.2)
+    connection_pool (1.0.0)
     countdownlatch (1.0.0)
     deep_merge (1.0.0)
     diff-lcs (1.1.3)
     eventmachine (1.0.0)
-    facter (1.6.13)
-    ffi (1.1.5)
+    facter (1.6.17)
+    ffi (1.3.1)
     future-resource (1.0.0)
-    girl_friday (0.10.0)
-      connection_pool (~> 0.9.0)
+    girl_friday (0.11.2)
+      connection_pool (~> 1.0)
+      rubinius-actor
     guard (1.5.0)
       listen (>= 0.4.2)
       lumberjack (>= 1.0.2)
@@ -62,46 +64,49 @@ GEM
     guard-rspec (2.1.0)
       guard (>= 1.1)
       rspec (~> 2.11)
-    has-guarded-handlers (1.3.1)
+    has-guarded-handlers (1.5.0)
     http (0.4.0)
       certified
       http_parser.rb
     http_parser.rb (0.5.3)
+    http_router (0.11.0)
+      rack (>= 1.0.0)
+      url_mount (~> 0.2.1)
     i18n (0.6.1)
-    json (1.7.5)
+    json (1.7.7)
     listen (0.5.3)
     little-plugger (1.1.3)
-    logging (1.8.0)
+    logging (1.8.1)
       little-plugger (>= 1.1.3)
       multi_json (>= 1.3.6)
     lumberjack (1.0.2)
-    metaclass (0.0.1)
     method_source (0.8.1)
-    mocha (0.12.7)
-      metaclass (~> 0.0.1)
-    multi_json (1.3.6)
-    niceogiri (1.0.2)
-      nokogiri (~> 1.4)
-    nio4r (0.4.0)
-    nokogiri (1.5.5)
+    multi_json (1.6.1)
+    niceogiri (1.1.1)
+      nokogiri (~> 1.5)
+    nio4r (0.4.3)
+    nokogiri (1.5.6)
+    octarine (0.0.3)
+      http_router
     pry (0.9.10)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
       slop (~> 3.3.1)
-    punchblock (1.5.1)
+    punchblock (1.8.0)
       activesupport (~> 3.0)
       blather (>= 0.7.0)
-      celluloid (~> 0.12, >= 0.12.1)
+      celluloid (~> 0.12, >= 0.12.4)
       future-resource (~> 1.0)
-      has-guarded-handlers (~> 1.3)
-      niceogiri (~> 1.0)
+      has-guarded-handlers (~> 1.5)
+      niceogiri (~> 1.1)
+      nokogiri (~> 1.5, >= 1.5.6)
       ruby_ami (~> 1.2, >= 1.2.1)
       ruby_fs (~> 1.0)
       ruby_speech (~> 1.0)
       state_machine (~> 1.0)
-    rack (1.4.1)
+    rack (1.5.2)
     rake (0.9.2.2)
-    reel (0.2.0)
+    reel (0.3.0)
       celluloid-io (>= 0.8.0)
       http (>= 0.2.0)
       http_parser.rb (>= 0.5.3)
@@ -115,22 +120,28 @@ GEM
     rspec-expectations (2.11.3)
       diff-lcs (~> 1.1.3)
     rspec-mocks (2.11.3)
-    ruby_ami (1.2.4)
+    rubinius-actor (0.0.2)
+      rubinius-core-api
+    rubinius-core-api (0.0.1)
+    ruby_ami (1.3.0)
       celluloid-io (~> 0.12.0)
       countdownlatch (~> 1.0)
       future-resource
       girl_friday
-    ruby_fs (1.0.1)
+    ruby_fs (1.0.3)
       celluloid-io (~> 0.12.0)
       json
-    ruby_speech (1.0.0)
+    ruby_speech (1.0.2)
       activesupport (>= 3.0.7)
-      niceogiri (~> 1.0)
+      niceogiri (~> 1.1, >= 1.1.1)
+      nokogiri (~> 1.5, >= 1.5.6)
     slop (3.3.3)
     state_machine (1.1.2)
     thor (0.16.0)
-    timers (1.0.1)
-    websocket_parser (0.1.0)
+    timers (1.1.0)
+    url_mount (0.2.1)
+      rack
+    websocket_parser (0.1.1)
       http
 
 PLATFORMS
@@ -139,7 +150,6 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.0)
   guard-rspec
-  mocha
   rake
   rspec (~> 2.5)
   virginia!
