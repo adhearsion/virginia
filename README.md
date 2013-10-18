@@ -10,7 +10,7 @@ The plugin defines three configuration keys.
 
 * host: Which IP to bind on (defaults to 0.0.0.0)
 * port: Which port to listen on (defaults to 8080)
-* handler: the Reel::App class to use (see below)
+* handler: the Reel::Server class to use (see below)
 
 ## Handler
 Virginia bundles a simple logging handler class that will answer to GET on "/" with OK and prints a log message in the Adhearsion console.
@@ -19,17 +19,18 @@ An example handler, implementing click-to-call, would be built as follows:
 
 ```ruby
 require 'reel'
-require 'reel/app'
 
 class RequestHandler
-  include Reel::App
-  get('/dial') do
-    Adhearsion::OutboundCall.originate "SIP/100"  do
-      invoke ConnectingController
+  def initialize(host, port)
+    Reel::Server.supervise(host, port) do |connection|
+      connection.each_request do |request|
+        Adhearsion::OutboundCall.originate "SIP/100"  do
+          invoke ConnectingController
+        end
+        [200, {}, "200 OK"]
+      end
     end
-    [200, {}, "200 OK"]
   end
-end
 ```
 
 ### Author

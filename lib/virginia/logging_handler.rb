@@ -1,12 +1,13 @@
 require 'reel'
-require 'reel/app'
 
 module Virginia
-  class LoggingHandler
-    include Reel::App
-    get "/" do
-      logger.info "Virginia request received"
-      [:ok, "200 OK"] 
-    end
-  end
+	class LoggingHandler
+		def initialize(host, port)
+			Reel::Server.supervise(host, port) do |connection|
+				connection.each_request do |request|
+					request.respond :ok, "Hello, world!"
+				end
+			end
+		end
+	end
 end
