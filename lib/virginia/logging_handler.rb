@@ -4,9 +4,9 @@ module Virginia
 	class LoggingHandler
 		def initialize(host, port)
 			Reel::Server.supervise(host, port) do |connection|
-				while request = connection.request
-					request.respond :ok, "hello, world!"
-				end 
+				connection.each_request do |request|
+					request.respond :ok, "Hello, world!"
+				end
 			end
 		end
 	end
