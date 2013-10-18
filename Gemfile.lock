@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    virginia (0.1.0)
+    virginia (0.2.0)
       activesupport (>= 3.0)
       adhearsion (~> 2.4)
       octarine
