@@ -3,8 +3,7 @@ require 'reel'
 module Virginia
   class Service
     def self.start
-      handler = Adhearsion.config[:virginia].handler.new
-      handler.init
+      Adhearsion.config[:virginia].handler.new Adhearsion.config[:virginia].host, Adhearsion.config[:virginia].port
     end
   end
 end
