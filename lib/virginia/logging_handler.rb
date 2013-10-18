@@ -1,12 +1,13 @@
 require 'reel'
-require 'reel/app'
 
 module Virginia
-  class LoggingHandler
-    include Reel::App
-    get "/" do
-      logger.info "Virginia request received"
-      [:ok, "200 OK"] 
-    end
-  end
+	class LoggingHandler
+		def init
+			Reel::Server.supervise(Adhearsion.config[:virginia].host, Adhearsion.config[:virginia].port) do |connection|
+				while request = connection.request
+					request.respond :ok, "hello, world!"
+				end 
+			end
+		end
+	end
 end
