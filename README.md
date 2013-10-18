@@ -27,7 +27,7 @@ class RequestHandler
         Adhearsion::OutboundCall.originate "SIP/100"  do
           invoke ConnectingController
         end
-        [200, {}, "200 OK"]
+        request.respond :ok, "200 OK"
       end
     end
   end
