@@ -9,7 +9,7 @@ describe Virginia::Service do
   let(:host) { "127.0.0.1" }
   let(:port) { 8989 }
   let(:handler) { DummyHandler }
-  before :all do
+  before :each do
     Adhearsion.config.virginia.host = host
     Adhearsion.config.virginia.port = port
     Adhearsion.config.virginia.handler = handler
