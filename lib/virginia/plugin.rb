@@ -2,7 +2,7 @@ module Virginia
   class Plugin < Adhearsion::Plugin
 
     init :virginia do
-      logger.warn "Virginia has been loaded"
+      logger.info "Virginia has been loaded"
       Service.start
     end
 
