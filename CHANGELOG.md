@@ -1,4 +1,5 @@
-# develop
+# Version 0.3.0
+  * Switch to Rackup-style app management
 
 # Version 0.2.1
   * Removed Octarine from dependencies
