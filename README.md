@@ -1,8 +1,8 @@
 # Virginia
 
-Virginia is a Reel interface to Adhearsion, named after a dance originating in the 17th century, the Virginia Reel.
+Virginia is a Reel interface to Adhearsion, named after a dance originating in the 17th century, the Virginia Reel. Now your web apps can dance with your voice apps!
 
-It allows you to bundle a simple, Sinatra-style web interface with your Adhearsion application, enabling use of all the available APIs.
+Virginia allows you to bundle a simple web interface in your Adhearsion application. You can use any Rack-compatible framework with Reel.
 
 ## Configuration
 
@@ -10,32 +10,53 @@ The plugin defines three configuration keys.
 
 * host: Which IP to bind on (defaults to 0.0.0.0)
 * port: Which port to listen on (defaults to 8080)
-* handler: the Reel::Server class to use (see below)
+* rackup: Location of the Rackup configuration file (defaults to config.ru)
 
-## Handler
-Virginia bundles a simple logging handler class that will answer to GET on "/" with OK and prints a log message in the Adhearsion console.
+## Sinatra Example
 
-An example handler, implementing click-to-call, would be built as follows:
+This example uses Sinatra, but this should work with any Rack-compatible framework.
 
-```ruby
-require 'reel'
+### Update Gemfile
 
-class RequestHandler
-  def initialize(host, port)
-    Reel::Server.supervise(host, port) do |connection|
-      connection.each_request do |request|
-        Adhearsion::OutboundCall.originate "SIP/100"  do
-          invoke ConnectingController
-        end
-        [200, {}, "200 OK"]
-      end
-    end
-  end
+Add the framework gem to your Gemfile, in our case, Sinatra:
+
+```Ruby
+gem 'sinatra'
 ```
 
-### Author
+Don't forget to run `bundle install`.
+
+### Create the app
+
+Here is a simple "Hello World" app in Sinatra. Place this in `lib/sinatra_app.rb`:
+
+```Ruby
+require 'sinatra'
+
+get '/' do
+  'Hello world!'
+end
+```
+
+### Configure Rack
+
+Finally, tell Rack how to start your web app. Place this in `config.ru`:
+
+```Ruby
+require "#{Adhearsion.root}/lib/sinatra_app.rb"
+run Sinatra::Application
+```
+
+### Test the app
+
+Start Adhearsion.  You should be able to visit `http://localhost:8080/` in your browser and see "Hello world!"
+
+### Contributors
 
 Original author: [Luca Pradovera](https://github.com/polysics)
+
+Contributors:
+* [Ben Klang](https://github.com/bklang)
 
 ### Links
 
@@ -55,4 +76,4 @@ Original author: [Luca Pradovera](https://github.com/polysics)
 
 ### Copyright
 
-Copyright (c) 2012 Adhearsion Foundation Inc. MIT license (see LICENSE for details).
+Copyright (c) 2012-2014 Adhearsion Foundation Inc. MIT license (see LICENSE for details).
