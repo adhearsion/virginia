@@ -51,6 +51,36 @@ run Sinatra::Application
 
 Start Adhearsion.  You should be able to visit `http://localhost:8080/` in your browser and see "Hello world!"
 
+## Using the built-in document cache
+
+Assuming you are using Sinatra like in the above examples, put this in your `lib/sinatra_app.rb`:
+
+```Ruby
+require 'sinatra'
+require 'virginia/document_cache'
+
+get '/documents/:id' do
+  begin
+    grammar = Virginia::DocumentCache.fetch params[:id]
+  rescue Virginia::DocumentCache::NotFound
+    raise Sinatra::NotFound
+  end
+
+  grammar.to_s
+end
+```
+
+Then, to store a document in the cache, do this in your CallController:
+
+```Ruby
+cache_id = Virginia::DocumentCache.store 'Hello World!'
+virginia_config = Adhearsion.config.virginia
+logger.info "Document has been cached to http://#{virginia_config.host}:#{virginia_config.port}/documents/#{cache_id}"
+```
+
+You should be able to retrieve the document at the logged URL.
+
+
 ### Contributors
 
 Original author: [Luca Pradovera](https://github.com/polysics)
