@@ -29,10 +29,11 @@ module Virginia
 
     # Registers a new document with the cache
     # @param [Object] document The document to be stored in the cache
-    # @param [Fixnum, Nil] lifetime The amount of time in seconds the document should be kept. If nil, document will be kept indefinitely
+    # @param [Fixnum, Nil] lifetime The amount of time in seconds the document should be kept. If nil, document will be kept indefinitely.
+    # @param [String, Nil] id The ID to use to store the document. If nil, one will be generated.
     # @return [String] ID of the stored document
-    def store(document, lifetime = 10)
-      id = generate_id
+    def store(document, lifetime = 10, id = nil)
+      id ||= generate_id
       @documents[id] = {
         document: document,
         expires: lifetime ? Time.now + lifetime : nil
