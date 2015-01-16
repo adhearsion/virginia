@@ -51,10 +51,19 @@ module Virginia
 
     # Retrieves a document from the cache
     # @param [String] id ID of the document to be retrieved from the cache
+    # @param [Fixnum, Nil] lifetime The amount of time in seconds the document should be kept. If nil, document will be kept indefinitely.
+    # @yield If given, will be used to generate the document, store it, and then return.
     # @return [Object] document Returns the document if found in the cache
     # @raises [NotFound] If the document is not found in the cache
-    def fetch(id)
-      raise NotFound unless @documents.has_key? id
+    def fetch(id, lifetime = 10)
+      unless @documents.has_key? id
+        if block_given?
+          store yield, lifetime, id
+        else
+          raise NotFound
+        end
+      end
+      
       @documents[id][:document]
     end
 
