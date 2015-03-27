@@ -29,10 +29,11 @@ module Virginia
 
     # Registers a new document with the cache
     # @param [Object] document The document to be stored in the cache
-    # @param [Fixnum, Nil] lifetime The amount of time in seconds the document should be kept. If nil, document will be kept indefinitely
+    # @param [Fixnum, Nil] lifetime The amount of time in seconds the document should be kept. If nil, document will be kept indefinitely.
+    # @param [String, Nil] id The ID to use to store the document. If nil, one will be generated.
     # @return [String] ID of the stored document
-    def store(document, lifetime = 10)
-      id = generate_id
+    def store(document, lifetime = 10, id = nil)
+      id ||= generate_id
       @documents[id] = {
         document: document,
         expires: lifetime ? Time.now + lifetime : nil
@@ -50,10 +51,19 @@ module Virginia
 
     # Retrieves a document from the cache
     # @param [String] id ID of the document to be retrieved from the cache
+    # @param [Fixnum, Nil] lifetime The amount of time in seconds the document should be kept. If nil, document will be kept indefinitely.
+    # @yield If given, will be used to generate the document, store it, and then return.
     # @return [Object] document Returns the document if found in the cache
     # @raises [NotFound] If the document is not found in the cache
-    def fetch(id)
-      raise NotFound unless @documents.has_key? id
+    def fetch(id, lifetime = 10)
+      unless @documents.has_key? id
+        if block_given?
+          store yield, lifetime, id
+        else
+          raise NotFound
+        end
+      end
+      
       @documents[id][:document]
     end
 
