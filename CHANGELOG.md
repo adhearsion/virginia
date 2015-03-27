@@ -1,3 +1,6 @@
+# Version 0.4.0
+  * Add document cache
+
 # Version 0.3.0
   * Switch to Rackup-style app management
 
