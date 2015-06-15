@@ -1,3 +1,12 @@
+# develop
+  * BREAKING CHANGES! Read below:
+  * Support for storing document content-types with the document
+  * Add document metadata to the document cache. You must now specify the content type (or use the default of text/plain) when caching a document. This way Virginia knows how to serve it when it is requested.
+  * Wrap cached documents and store them as Virginia::DocumentCache::Document
+  * When retrieving a document from the cache, return the wrapped document
+  * Switch DocumentCache to an Actor for better performance
+  * Load & start DocumentCache's actor by default
+
 # Version 0.4.0
   * Add document cache
 

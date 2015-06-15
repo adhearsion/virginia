@@ -1,5 +1,6 @@
 require 'adhearsion'
 require 'virginia'
+require 'timecop'
 
 ENV['AHN_ENV'] = 'test'
 
