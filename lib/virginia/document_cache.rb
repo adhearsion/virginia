@@ -8,6 +8,9 @@ module Virginia
 
     NotFound = Class.new StandardError
 
+    DEFAULT_CONTENT_TYPE = 'text/plain'
+    DEFAULT_LIFETIME = 10
+
     attr_reader :mutex
 
     class << self
@@ -30,7 +33,7 @@ module Virginia
     # @param [Fixnum, Nil] lifetime The amount of time in seconds the document should be kept. If nil, document will be kept indefinitely.
     # @param [String, Nil] id The ID to use to store the document. If nil, one will be generated.
     # @return [String] Cache ID of the stored document
-    def store(document, content_type = 'text/plain', lifetime = 10, id = nil)
+    def store(document, content_type = DEFAULT_CONTENT_TYPE, lifetime = DEFAULT_LIFETIME, id = nil)
       id ||= generate_id
       doc = Virginia::DocumentCache::Document.new id, document, content_type, lifetime
       store_document doc
@@ -53,14 +56,20 @@ module Virginia
 
     # Retrieves a document from the cache
     # @param [String] id ID of the document to be retrieved from the cache
-    # @param [Fixnum, Nil] lifetime The amount of time in seconds the document should be kept. If nil, document will be kept indefinitely.
     # @yield If given, will be used to generate the document, store it, and then return.
     # @return [Virginia::DocumentCache::Document] Returns the document if found in the cache
     # @raises [Virginia::DocumentCache::NotFound] If the document is not found in the cache
-    def fetch(id, lifetime = 10)
+    def fetch(id)
       unless @documents.has_key? id
         if block_given?
-          store yield, lifetime, id
+          result = yield
+          if result.is_a? Document
+            store_document result
+          else
+            args = *yield
+            doc = Virginia::DocumentCache::Document.new id, args[0], args[1] || DEFAULT_CONTENT_TYPE, args[2] || DEFAULT_LIFETIME
+            store_document doc
+          end
         else
           abort NotFound.new
         end

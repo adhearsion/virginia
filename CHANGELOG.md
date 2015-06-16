@@ -4,6 +4,7 @@
   * Add document metadata to the document cache. You must now specify the content type (or use the default of text/plain) when caching a document. This way Virginia knows how to serve it when it is requested.
   * Wrap cached documents and store them as Virginia::DocumentCache::Document
   * When retrieving a document from the cache, return the wrapped document
+  * DocumentCache#fetch no longer accepts a `lifetime` argument. Instead, return an array of arguments suitable for passing to `#store` from the block, or return a complete DocumentCache::Document
   * Switch DocumentCache to an Actor for better performance
   * Load & start DocumentCache's actor by default
 

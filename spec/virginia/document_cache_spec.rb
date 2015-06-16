@@ -44,4 +44,32 @@ describe Virginia::DocumentCache do
     expect(subject.fetch(id2).body).to eq 'bazqux'
     Timecop.return
   end
+
+  it 'should allow me to supply a block to #store and create a document if one is not already cached' do
+    Timecop.freeze
+    id, body, ctype, lifetime = 'boo', 'abcd', 'text/plain', 93
+    expect { subject.fetch(id) }.to raise_error Virginia::DocumentCache::NotFound
+    subject.fetch(id) do
+      [body, 'text/plain', lifetime]
+    end
+    doc = subject.fetch id
+    expect(doc.body).to eq body
+    expect(doc.content_type).to eq ctype
+    expect(doc.expires_at).to eq Time.now + lifetime
+    Timecop.return
+  end
+
+  it 'should allow me to supply a block to #store that returns a document and cache it, if one is not already cached' do
+    Timecop.freeze
+    id, body, ctype, lifetime = 'boo', 'abcd', 'application/x-blammo', 35
+    expect { subject.fetch(id) }.to raise_error Virginia::DocumentCache::NotFound
+    subject.fetch(id) do
+      Virginia::DocumentCache::Document.new id, body, ctype, lifetime
+    end
+    doc = subject.fetch id
+    expect(doc.body).to eq body
+    expect(doc.content_type).to eq ctype
+    expect(doc.expires_at).to eq Time.now + lifetime
+    Timecop.return
+  end
 end
