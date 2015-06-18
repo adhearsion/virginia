@@ -11,7 +11,7 @@ module Virginia
     DEFAULT_CONTENT_TYPE = 'text/plain'
     DEFAULT_LIFETIME = 10
 
-    execute_block_on_receiver :register
+    execute_block_on_receiver :register, :send
 
     class << self
       def method_missing(m, *args, &block)
