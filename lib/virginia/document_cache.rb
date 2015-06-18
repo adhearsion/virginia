@@ -11,6 +11,8 @@ module Virginia
     DEFAULT_CONTENT_TYPE = 'text/plain'
     DEFAULT_LIFETIME = 10
 
+    execute_block_on_receiver :register
+
     attr_reader :mutex
 
     class << self
@@ -21,6 +23,7 @@ module Virginia
 
     def initialize
       @documents = {}
+      @document_creators = {}
 
       every(60) do
         logger.debug "Reaping expired cached document"
@@ -60,7 +63,12 @@ module Virginia
     # @return [Virginia::DocumentCache::Document] Returns the document if found in the cache
     # @raises [Virginia::DocumentCache::NotFound] If the document is not found in the cache
     def fetch(id)
+      # Check for a registered creator first
+      check_and_run_creator id unless @documents.has_key? id
+
+      # If we still don't have a document, check for a supplied block
       unless @documents.has_key? id
+
         if block_given?
           result = yield
           if result.is_a? Document
@@ -78,6 +86,26 @@ module Virginia
       @documents[id]
     end
 
+    # Registers a creation callback to populate a given document when requested
+    # @param [String] id ID of the document for which the creator should be registered
+    # @param [String] content_type Content-Type of the document
+    # @param [Fixnum, Nil] lifetime The amount of time in seconds the document should be kept. If nil, document will be kept indefinitely.
+    # @return [Nil, Object] nil if the ID was not found among the creators; otherwise the creator is returned
+    def register(id, content_type, lifetime = DEFAULT_LIFETIME, &callback)
+      @document_creators[id] = {
+        content_type: content_type,
+        lifetime: lifetime,
+        callback: callback,
+      }
+    end
+
+    # Removes a document creator registration by ID
+    # @param [String] id ID of the document for which the creator should be deleted
+    # @return [Nil, Object] nil if the ID was not found among the creators; otherwise the creator is returned
+    def unregister(id)
+      @document_creators.delete id
+    end
+
     def reap_expired!
       @documents.each_pair do |id, doc|
         @documents.delete(id) if doc[:expires_at] < Time.now
@@ -88,6 +116,16 @@ module Virginia
 
     def generate_id
       SecureRandom.hex(16)
+    end
+
+    def check_and_run_creator(id)
+      if creator = @document_creators[id]
+        begin
+          store_document Document.new id, creator[:callback].call, creator[:content_type], creator[:lifetime]
+        rescue => e
+          abort e
+        end
+      end
     end
   end
 end

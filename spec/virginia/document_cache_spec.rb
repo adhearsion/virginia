@@ -76,4 +76,61 @@ describe Virginia::DocumentCache do
       end
     end
   end
+
+  context 'registering document content at an id' do
+    let(:doc_id) { 'abcd1234' }
+    let(:body) { 'once upon a time there was a muppet' }
+    let(:ctype) { 'application/x-powa' }
+    let(:lifetime) { 193 }
+
+    before :each do
+      expect { subject.fetch(doc_id) }.to raise_error Virginia::DocumentCache::NotFound
+      Timecop.freeze
+    end
+
+    after :each do
+      Timecop.return
+    end
+
+    context 'auto-creating documents' do
+      before :each do
+      end
+
+      after :each do
+        doc = subject.fetch doc_id
+        expect(doc.body).to eq body
+        expect(doc.content_type).to eq ctype
+        expect(doc.expires_at).to eq Time.now + lifetime
+      end
+
+      it 'should auto-populate the document if not found in the cache' do
+        subject.register(doc_id, ctype, lifetime) do
+          body
+        end
+      end
+
+      it 'should not invoke the block if the document is already in the cache' do
+        subject.store body, ctype, lifetime, doc_id
+        subject.register(doc_id, ctype, lifetime) do
+          raise "Should not get here!"
+        end
+      end
+    end
+
+    it 'should allow removing a document creator' do
+      Timecop.freeze
+      subject.register(doc_id, ctype, lifetime) do
+        body
+      end
+      doc = subject.fetch(doc_id)
+
+      # Move past expiration and clean up the cached document
+      Timecop.travel Time.now + (lifetime + 1) 
+      subject.reap_expired!
+
+      subject.unregister(doc_id)
+      expect { subject.fetch(doc_id) }.to raise_error Virginia::DocumentCache::NotFound
+      Timecop.return
+    end
+  end
 end
