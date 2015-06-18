@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths = ["lib"]
 
-  s.add_runtime_dependency %q<adhearsion>, ["~> 2.4"]
+  s.add_runtime_dependency %q<adhearsion>, ["~> 2.6"]
   s.add_runtime_dependency %q<activesupport>, [">= 3.0"]
   s.add_runtime_dependency %q<reel>, ["~> 0.5.0"]
   s.add_runtime_dependency %q<reel-rack>
@@ -25,5 +25,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency %q<bundler>, ["~> 1.0"]
   s.add_development_dependency %q<rspec>, ["~> 2.5"]
   s.add_development_dependency %q<rake>, [">= 0"]
+  s.add_development_dependency %q<timecop>
   s.add_development_dependency %q<guard-rspec>
  end

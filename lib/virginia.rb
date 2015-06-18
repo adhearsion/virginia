@@ -1,11 +1,10 @@
 require "adhearsion"
-require "active_support/dependencies/autoload"
-require "virginia/version"
-require "virginia/plugin"
+%w(
+  version
+  plugin
+  service
+  document_cache
+).each { |file| require "virginia/#{file}" }
 
 module Virginia
-  extend ActiveSupport::Autoload
-  autoload :Plugin
-  autoload :Service
-  autoload :LoggingHandler
 end

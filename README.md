@@ -57,16 +57,15 @@ Assuming you are using Sinatra like in the above examples, put this in your `lib
 
 ```Ruby
 require 'sinatra'
-require 'virginia/document_cache'
 
 get '/documents/:id' do
   begin
-    grammar = Virginia::DocumentCache.fetch params[:id]
+    document = Virginia::DocumentCache.fetch params[:id]
+    headers['Content-Type'] = document.content_type
+    document.body
   rescue Virginia::DocumentCache::NotFound
     raise Sinatra::NotFound
   end
-
-  grammar.to_s
 end
 ```
 
