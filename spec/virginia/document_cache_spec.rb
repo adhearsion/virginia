@@ -30,7 +30,6 @@ describe Virginia::DocumentCache do
     id = subject.store 'foobar', 'text/plain', 30
     doc = subject.fetch id
     expect(doc.expires_at).to eq Time.now + 30
-    Timecop.return
   end
 
   it 'should allow documents that do not expire' do
@@ -42,7 +41,6 @@ describe Virginia::DocumentCache do
     subject.reap_expired!
     doc = subject.fetch id
     expect(doc.body).to eq 'foobar'
-    Timecop.return
   end
 
   it 'should remove (only) expired documents from the cache' do
@@ -54,7 +52,6 @@ describe Virginia::DocumentCache do
 
     expect { subject.fetch(id1) }.to raise_error Virginia::DocumentCache::NotFound
     expect(subject.fetch(id2).body).to eq 'bazqux'
-    Timecop.return
   end
 
   context 'auto-creation on #fetch' do
@@ -73,7 +70,6 @@ describe Virginia::DocumentCache do
       expect(doc.body).to eq body
       expect(doc.content_type).to eq ctype
       expect(doc.expires_at).to eq Time.now + lifetime
-      Timecop.return
     end
 
     it 'should allow me to supply a block to #store and create a document if one is not already cached' do
@@ -98,10 +94,6 @@ describe Virginia::DocumentCache do
     before :each do
       expect { subject.fetch(doc_id) }.to raise_error Virginia::DocumentCache::NotFound
       Timecop.freeze
-    end
-
-    after :each do
-      Timecop.return
     end
 
     context 'auto-creating documents' do
@@ -139,7 +131,6 @@ describe Virginia::DocumentCache do
 
       subject.unregister(doc_id)
       expect { subject.fetch(doc_id) }.to raise_error Virginia::DocumentCache::NotFound
-      Timecop.return
     end
   end
 end
