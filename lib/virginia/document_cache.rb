@@ -13,8 +13,6 @@ module Virginia
 
     execute_block_on_receiver :register
 
-    attr_reader :mutex
-
     class << self
       def method_missing(m, *args, &block)
         Celluloid::Actor[:virginia_document_cache].send m, *args, &block

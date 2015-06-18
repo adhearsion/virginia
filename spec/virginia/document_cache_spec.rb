@@ -68,7 +68,7 @@ describe Virginia::DocumentCache do
       expect { subject.fetch(doc_id) }.to raise_error Virginia::DocumentCache::NotFound
     end
 
-    after :each do 
+    after :each do
       doc = subject.fetch doc_id
       expect(doc.body).to eq body
       expect(doc.content_type).to eq ctype
@@ -105,9 +105,6 @@ describe Virginia::DocumentCache do
     end
 
     context 'auto-creating documents' do
-      before :each do
-      end
-
       after :each do
         doc = subject.fetch doc_id
         expect(doc.body).to eq body
@@ -137,7 +134,7 @@ describe Virginia::DocumentCache do
       doc = subject.fetch(doc_id)
 
       # Move past expiration and clean up the cached document
-      Timecop.travel Time.now + (lifetime + 1) 
+      Timecop.travel Time.now + (lifetime + 1)
       subject.reap_expired!
 
       subject.unregister(doc_id)
