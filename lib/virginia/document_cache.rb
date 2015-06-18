@@ -108,7 +108,7 @@ module Virginia
 
     def reap_expired!
       @documents.each_pair do |id, doc|
-        @documents.delete(id) if doc[:expires_at] < Time.now
+        @documents.delete(id) if doc.expires_at && doc.expires_at < Time.now
       end
     end
 
