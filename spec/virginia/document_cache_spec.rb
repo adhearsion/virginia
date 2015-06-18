@@ -29,7 +29,19 @@ describe Virginia::DocumentCache do
     Timecop.freeze
     id = subject.store 'foobar', 'text/plain', 30
     doc = subject.fetch id
-    doc.expires_at.should == Time.now + 30
+    expect(doc.expires_at).to eq Time.now + 30
+    Timecop.return
+  end
+
+  it 'should allow documents that do not expire' do
+    Timecop.freeze
+    id = subject.store 'foobar', 'text/plain', nil
+    doc = subject.fetch id
+    expect(doc.expires_at).to be nil
+    Timecop.travel Time.now + (20 * 365 * 24 * 60 * 60) # 20 years
+    subject.reap_expired!
+    doc = subject.fetch id
+    expect(doc.body).to eq 'foobar'
     Timecop.return
   end
 
