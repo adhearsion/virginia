@@ -45,31 +45,35 @@ describe Virginia::DocumentCache do
     Timecop.return
   end
 
-  it 'should allow me to supply a block to #store and create a document if one is not already cached' do
-    Timecop.freeze
-    id, body, ctype, lifetime = 'boo', 'abcd', 'text/plain', 93
-    expect { subject.fetch(id) }.to raise_error Virginia::DocumentCache::NotFound
-    subject.fetch(id) do
-      [body, 'text/plain', lifetime]
-    end
-    doc = subject.fetch id
-    expect(doc.body).to eq body
-    expect(doc.content_type).to eq ctype
-    expect(doc.expires_at).to eq Time.now + lifetime
-    Timecop.return
-  end
+  context 'auto-creation on #fetch' do
+    let(:doc_id) { 'boo' }
+    let(:body) { 'abcd' }
+    let(:ctype) { 'text/plain' }
+    let(:lifetime) { 93 }
 
-  it 'should allow me to supply a block to #store that returns a document and cache it, if one is not already cached' do
-    Timecop.freeze
-    id, body, ctype, lifetime = 'boo', 'abcd', 'application/x-blammo', 35
-    expect { subject.fetch(id) }.to raise_error Virginia::DocumentCache::NotFound
-    subject.fetch(id) do
-      Virginia::DocumentCache::Document.new id, body, ctype, lifetime
+    before :each do
+      Timecop.freeze
+      expect { subject.fetch(doc_id) }.to raise_error Virginia::DocumentCache::NotFound
     end
-    doc = subject.fetch id
-    expect(doc.body).to eq body
-    expect(doc.content_type).to eq ctype
-    expect(doc.expires_at).to eq Time.now + lifetime
-    Timecop.return
+
+    after :each do 
+      doc = subject.fetch doc_id
+      expect(doc.body).to eq body
+      expect(doc.content_type).to eq ctype
+      expect(doc.expires_at).to eq Time.now + lifetime
+      Timecop.return
+    end
+
+    it 'should allow me to supply a block to #store and create a document if one is not already cached' do
+      subject.fetch(doc_id) do
+        [body, 'text/plain', lifetime]
+      end
+    end
+
+    it 'should allow me to supply a block to #store that returns a document and cache it, if one is not already cached' do
+      subject.fetch(doc_id) do
+        Virginia::DocumentCache::Document.new doc_id, body, ctype, lifetime
+      end
+    end
   end
 end
