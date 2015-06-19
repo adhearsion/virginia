@@ -29,8 +29,18 @@ describe Virginia::DocumentCache do
     Timecop.freeze
     id = subject.store 'foobar', 'text/plain', 30
     doc = subject.fetch id
-    doc.expires_at.should == Time.now + 30
-    Timecop.return
+    expect(doc.expires_at).to eq Time.now + 30
+  end
+
+  it 'should allow documents that do not expire' do
+    Timecop.freeze
+    id = subject.store 'foobar', 'text/plain', nil
+    doc = subject.fetch id
+    expect(doc.expires_at).to be nil
+    Timecop.travel Time.now + (20 * 365 * 24 * 60 * 60) # 20 years
+    subject.reap_expired!
+    doc = subject.fetch id
+    expect(doc.body).to eq 'foobar'
   end
 
   it 'should remove (only) expired documents from the cache' do
@@ -42,34 +52,85 @@ describe Virginia::DocumentCache do
 
     expect { subject.fetch(id1) }.to raise_error Virginia::DocumentCache::NotFound
     expect(subject.fetch(id2).body).to eq 'bazqux'
-    Timecop.return
   end
 
-  it 'should allow me to supply a block to #store and create a document if one is not already cached' do
-    Timecop.freeze
-    id, body, ctype, lifetime = 'boo', 'abcd', 'text/plain', 93
-    expect { subject.fetch(id) }.to raise_error Virginia::DocumentCache::NotFound
-    subject.fetch(id) do
-      [body, 'text/plain', lifetime]
+  context 'auto-creation on #fetch' do
+    let(:doc_id) { 'boo' }
+    let(:body) { 'abcd' }
+    let(:ctype) { 'text/plain' }
+    let(:lifetime) { 93 }
+
+    before :each do
+      Timecop.freeze
+      expect { subject.fetch(doc_id) }.to raise_error Virginia::DocumentCache::NotFound
     end
-    doc = subject.fetch id
-    expect(doc.body).to eq body
-    expect(doc.content_type).to eq ctype
-    expect(doc.expires_at).to eq Time.now + lifetime
-    Timecop.return
+
+    after :each do
+      doc = subject.fetch doc_id
+      expect(doc.body).to eq body
+      expect(doc.content_type).to eq ctype
+      expect(doc.expires_at).to eq Time.now + lifetime
+    end
+
+    it 'should allow me to supply a block to #store and create a document if one is not already cached' do
+      subject.fetch(doc_id) do
+        [body, 'text/plain', lifetime]
+      end
+    end
+
+    it 'should allow me to supply a block to #store that returns a document and cache it, if one is not already cached' do
+      subject.fetch(doc_id) do
+        Virginia::DocumentCache::Document.new doc_id, body, ctype, lifetime
+      end
+    end
   end
 
-  it 'should allow me to supply a block to #store that returns a document and cache it, if one is not already cached' do
-    Timecop.freeze
-    id, body, ctype, lifetime = 'boo', 'abcd', 'application/x-blammo', 35
-    expect { subject.fetch(id) }.to raise_error Virginia::DocumentCache::NotFound
-    subject.fetch(id) do
-      Virginia::DocumentCache::Document.new id, body, ctype, lifetime
+  context 'registering document content at an id' do
+    let(:doc_id) { 'abcd1234' }
+    let(:body) { 'once upon a time there was a muppet' }
+    let(:ctype) { 'application/x-powa' }
+    let(:lifetime) { 193 }
+
+    before :each do
+      expect { subject.fetch(doc_id) }.to raise_error Virginia::DocumentCache::NotFound
+      Timecop.freeze
     end
-    doc = subject.fetch id
-    expect(doc.body).to eq body
-    expect(doc.content_type).to eq ctype
-    expect(doc.expires_at).to eq Time.now + lifetime
-    Timecop.return
+
+    context 'auto-creating documents' do
+      after :each do
+        doc = subject.fetch doc_id
+        expect(doc.body).to eq body
+        expect(doc.content_type).to eq ctype
+        expect(doc.expires_at).to eq Time.now + lifetime
+      end
+
+      it 'should auto-populate the document if not found in the cache' do
+        subject.register(doc_id, ctype, lifetime) do
+          body
+        end
+      end
+
+      it 'should not invoke the block if the document is already in the cache' do
+        subject.store body, ctype, lifetime, doc_id
+        subject.register(doc_id, ctype, lifetime) do
+          raise "Should not get here!"
+        end
+      end
+    end
+
+    it 'should allow removing a document creator' do
+      Timecop.freeze
+      subject.register(doc_id, ctype, lifetime) do
+        body
+      end
+      doc = subject.fetch(doc_id)
+
+      # Move past expiration and clean up the cached document
+      Timecop.travel Time.now + (lifetime + 1)
+      subject.reap_expired!
+
+      subject.unregister(doc_id)
+      expect { subject.fetch(doc_id) }.to raise_error Virginia::DocumentCache::NotFound
+    end
   end
 end

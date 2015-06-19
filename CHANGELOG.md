@@ -5,6 +5,7 @@
   * DocumentCache#fetch no longer accepts a `lifetime` argument. Instead, return an array of arguments suitable for passing to `#store` from the block, or return a complete DocumentCache::Document
   * Switch DocumentCache to an Actor for better performance
   * Load & start DocumentCache's actor by default
+  * Allow registering a document ID with a callback to populate it on demand
 
 # Version 0.4.0
   * Add document cache

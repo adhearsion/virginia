@@ -9,10 +9,6 @@ describe Virginia::DocumentCache::Document do
     @document = subject.new 'fake_id', 'fake_content'
   end
 
-  after :each do
-    Timecop.return
-  end
-
   it 'should accurately represent my content' do
     expect(@document.body).to eq 'fake_content'
   end
