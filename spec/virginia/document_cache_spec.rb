@@ -9,6 +9,14 @@ describe Virginia::DocumentCache do
     expect(subject.store('foo')).to be_a String
   end
 
+  it 'should not store a nil document' do
+    expect(subject.store(nil)).to be_nil
+  end
+
+  it 'should not store an empty string document' do
+    expect(subject.store("")).to be_nil
+  end
+
   it 'should allow me to retrieve the document by ID' do
     doc = 'foobar'
     id = subject.store doc

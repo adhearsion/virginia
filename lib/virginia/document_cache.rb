@@ -35,6 +35,8 @@ module Virginia
     # @param [String, Nil] id The ID to use to store the document. If nil, one will be generated.
     # @return [String] Cache ID of the stored document
     def store(document, content_type = DEFAULT_CONTENT_TYPE, lifetime = DEFAULT_LIFETIME, id = nil)
+      return if document.nil? || document.to_s.empty?
+
       id ||= generate_id
       doc = Virginia::DocumentCache::Document.new id, document, content_type, lifetime
       store_document doc
