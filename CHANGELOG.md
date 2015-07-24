@@ -1,4 +1,6 @@
 # develop
+
+# Version 0.4.0
   * BREAKING CHANGES! See the updated example in the README and the changes described below:
   * Support for storing document content-types associated with each cached document. You must now specify the content type (or use the default of text/plain) when caching a document. This way Virginia knows how to serve it when it is requested.
   * Wrap cached documents and store them as Virginia::DocumentCache::Document. The wrapped document is what will be returned from the cache.
