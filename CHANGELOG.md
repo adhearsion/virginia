@@ -1,3 +1,14 @@
+# develop
+
+# Version 0.4.0
+  * BREAKING CHANGES! See the updated example in the README and the changes described below:
+  * Support for storing document content-types associated with each cached document. You must now specify the content type (or use the default of text/plain) when caching a document. This way Virginia knows how to serve it when it is requested.
+  * Wrap cached documents and store them as Virginia::DocumentCache::Document. The wrapped document is what will be returned from the cache.
+  * DocumentCache#fetch no longer accepts a `lifetime` argument. Instead, return an array of arguments suitable for passing to `#store` from the block, or return a complete DocumentCache::Document
+  * Switch DocumentCache to an Actor for better performance
+  * Load & start DocumentCache's actor by default
+  * Allow registering a document ID with a callback to populate it on demand
+
 # Version 0.4.0
   * Add document cache
 

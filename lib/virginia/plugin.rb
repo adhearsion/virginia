@@ -6,6 +6,12 @@ module Virginia
     run :virginia do
       logger.info "Virginia has been loaded"
       Service.start
+
+      # Document Cache
+      supervisor = Virginia::DocumentCache.supervise_as(:virginia_document_cache)
+      Adhearsion::Events.register_callback :shutdown do
+        supervisor.terminate
+      end
     end
 
     config :virginia do
