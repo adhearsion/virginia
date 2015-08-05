@@ -19,7 +19,7 @@ describe Virginia::Service do
 
   it "should instantiate the handler" do
     rack_logger = double 'Rack::CommonLogger'
-    ::Rack::CommonLogger.should_receive(:new).once.with(TestApp, Adhearsion.logger).and_return rack_logger
+    ::Rack::CommonLogger.should_receive(:new).once.with(TestApp, Virginia.logger).and_return rack_logger
     ::Reel::Rack::Server.should_receive(:supervise_as).once.with(:reel_rack_server, rack_logger, options)
     Virginia::Service.start
   end
