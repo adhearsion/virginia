@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency %q<adhearsion>, ["~> 2.6"]
   s.add_runtime_dependency %q<activesupport>, [">= 3.0"]
   s.add_runtime_dependency %q<reel>, ["~> 0.5.0"]
+  s.add_runtime_dependency %q<http>, ["~> 0.8.0"]
   s.add_runtime_dependency %q<reel-rack>
 
   s.add_development_dependency %q<bundler>, ["~> 1.0"]
