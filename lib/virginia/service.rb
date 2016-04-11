@@ -14,7 +14,7 @@ module Virginia
         Port: config[:port]
       }.merge(options)
 
-      Virginia.logger.singleton_class.redefine_method(:write) { |msg| debug msg.chomp }
+      Virginia.logger.singleton_class.redefine_method(:write) { |msg| info msg.chomp }
 
       app = Rack::CommonLogger.new(app, Virginia.logger)
       supervisor = ::Reel::Rack::Server.supervise_as(:reel_rack_server, app, options)
