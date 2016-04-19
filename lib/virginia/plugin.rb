@@ -1,5 +1,8 @@
 # encoding: utf-8
 
+require 'virginia/service'
+require 'virginia/document_cache'
+
 module Virginia
   class Plugin < Adhearsion::Plugin
 

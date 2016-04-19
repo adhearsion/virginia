@@ -1,4 +1,4 @@
-# Virginia
+# Virginia [![Build Status](https://travis-ci.org/adhearsion/virginia.svg?branch=develop)](https://travis-ci.org/adhearsion/virginia)
 
 Virginia is a Reel interface to Adhearsion, named after a dance originating in the 17th century, the Virginia Reel. Now your web apps can dance with your voice apps!
 
