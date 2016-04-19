@@ -1,4 +1,5 @@
 # develop
+  * Adjust log message levels to be more appropriate to their content
 
 # Version 0.4.0
   * BREAKING CHANGES! See the updated example in the README and the changes described below:
